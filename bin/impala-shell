@@ -1,0 +1,38 @@
+#!/bin/bash
+# Copyright 2012 Cloudera Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# This script runs the Impala shell. Python is required. 
+#
+# This script assumes that the supporting library files for the Impala shell are
+# rooted in either the same directory that this script is in, or in a directory
+# in the environment variable ${IMPALA_SHELL_HOME}.
+#
+# The required directories are:
+# gen-py/ -- containing the Python thrift stubs for connecting to Impalad
+# lib/ -- containing the Hive Beeswax libraries, and the Python thrift 0.9 libraries
+# ext-py/ -- containing all the eggs for the modules packaged with the shell.
+
+SCRIPT_DIR=/app/impala/impala-shell
+SHELL_HOME=${IMPALA_SHELL_HOME:-${SCRIPT_DIR}}
+
+# External module eggs are located in /ext-py, append them to the PYTHONPATH
+EGG_PATH=''
+for EGG in $(ls ${SHELL_HOME}/ext-py/*.egg); do
+   EGG_PATH="${EGG}:${EGG_PATH}"
+done
+
+PYTHONPATH="${EGG_PATH}${SHELL_HOME}/gen-py:${SHELL_HOME}/lib:${PYTHONPATH}" \
+  exec python ${SHELL_HOME}/impala_shell.py "$@"

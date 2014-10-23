@@ -1,0 +1,5 @@
+#!/bin/bash
+export IMPALA_HOME=${IMPALA_HOME:-/app/impala}
+source $IMPALA_HOME/bin/common.env
+
+exec ${IMPALA_BIN}/statestored "$@"
