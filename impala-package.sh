@@ -98,9 +98,6 @@ $CP -r $srcpath/shell/build/impala-shell-*-cdh*/ext-py $impala_shell/
 $CP -r $srcpath/shell/build/impala-shell-*-cdh*/gen-py $impala_shell/
 $CP -r $srcpath/shell/build/impala-shell-*-cdh*/lib $impala_shell/
 
-# bin
-$CP bin/* $impala_home/bin/
-
 # copy other libs needed
 ldd ${be_dst_path}/impalad | grep libboost | awk '{ print $3 }' > .tmp.boost.libs.list
 ldd ${be_dst_path}/catalogd | grep libboost | awk '{ print $3 }' >> .tmp.boost.libs.list
@@ -113,6 +110,9 @@ for f in `cat .tmp.boost.libs.sorted.unique`; do
 	ln -sfv $linksource $linktarget
 done
 rm -f .tmp.boost.libs.list .tmp.boost.libs.sorted.unique
+
+# overwrite files in src/
+$CP -r src/* $impala_home/
 
 # strip executables
 if [[ $do_strip == "yes" ]]; then
